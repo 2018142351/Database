@@ -1,0 +1,16 @@
+# 1.库的创建
+
+create database xxx;
+
+# 2.库的修改
+
+改名：
+
+rename database xxx to dictionary;//有数据丢失的危险，官方不推荐
+
+alter database xxx character set utf8;
+
+# 3.库的删除
+
+drop database if exists xxx;
+

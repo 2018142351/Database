@@ -1,0 +1,75 @@
+定义游标
+declare 游标名 cursor for select语句;
+
+打开游标
+open 游标名;
+
+提取数据
+fetch 游标名 into 变量列表...
+
+关闭游标
+close 游标名;
+
+举例1：使用游标读取数据
+CREATE PROCEDURE p1()
+BEGIN
+DECLARE xm char(20);
+DECLARE gz int;
+DECLARE c1 CURSOR for (SELECT first_name,salary from employees where last_name like '%a%');
+open c1;
+FETCH c1 into xm,gz;
+SELECT xm,gz;
+close c1;
+end
+
+call p1();
+
+
+
+举例2：游标循环（命令行 ）
+drop PROCEDURE p2;
+delimiter ?
+CREATE PROCEDURE p2()
+BEGIN
+DECLARE ss int;
+DECLARE xm char(20);
+DECLARE gz int;
+DECLARE c1 CURSOR for (SELECT last_name,salary from employees where last_name like '%a%');
+DECLARE CONTINUE HANDLER for not found set ss=0;
+DECLARE CONTINUE HANDLER for SQLSTATE '02000' set ss=0;
+set ss=1;
+open c1;
+FETCH c1 into xm,gz;SELECT xm,gz;
+while ss=1 DO
+FETCH c1 into xm,gz;SELECT xm,gz;
+end WHILE;
+close c1;
+end?
+
+call p2()?
+
+
+https://wenku.baidu.com/view/fd337a659b6648d7c1c746e1.html
+SQLSTATE表
+表5 
+类代码02：无数据
+02000，指发生下述异常之一：
+select into语句或insert语句的子查询结果为空表；
+在搜索的update或delete语句内标识的行数为0；
+在fetch语句中引用的游标位置处于结果的最后一行之后。
+
+02501：游标位置对于当前行的fetch无效
+02502：检索到删除或更新
+02506：遇到错误
+
+
+07：SQL错误
+08：连接异常
+09：触发操作异常
+25：事务状态无效
+26：无效SQl语句标识
+27：触发的数据更改违例
+28：无效权限
+34：无效游标名称
+36：无效游标规范
+38：函数异常

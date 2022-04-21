@@ -1,0 +1,78 @@
+#1.简单查询
+select *FROM tb_emp;
+#指定列别名 
+SELECT NAME,salary  FROM tb_emp;
+
+SELECT NAME,salary+800 AS gongzi  FROM tb_emp;
+
+SELECT NAME,salary+800  gongzi  FROM tb_emp;
+
+SELECT NAME,salary*12 AS nianshouru  FROM tb_emp;
+#DISTINCT的作用是去掉重复
+SELECT DISTINCT title FROM tb_emp;
+#2.where 指定条件查询，筛选
+SELECT * 
+FROM  tb_emp
+WHERE title ='stock clerk';
+-- 运算符是=
+#筛选
+SELECT * 
+FROM  tb_emp
+WHERE title ='stock clerk' 
+and salary>=2500
+and salary<=3300;
+#BETWEEN在什么之间，区间
+SELECT * 
+FROM  tb_emp
+WHERE title ='stock clerk' 
+and salary BETWEEN 2500 and 3300;
+# in 在什么中
+SELECT * 
+FROM tb_emp
+where dept_id in(1,5,7,9);
+#相当于
+SELECT * 
+FROM tb_emp
+where dept_id= 1 or dept_id = 5;
+#查找表中以m开头的名字
+SELECT * 
+FROM tb_emp
+where name LIKE 'M%';
+# % 是任意多个字符 _ 是单个字符
+SELECT * 
+FROM tb_emp
+where name like 'M_i';
+
+#3.排序查询  关键字 order by   desc 是降序排序 去掉desc就是默认升序
+select  *
+FROM tb_emp
+ORDER BY salary desc;
+#主排序字段，副排序字段
+select  *
+FROM tb_emp
+ORDER BY manager_id ,title DESC;
+
+#4.聚合函数（统计 sum avg MAX  min COUNT ）
+SELECT sum(comm_pct) as 总提成
+FROM tb_emp;
+
+SELECT count(comm_pct) AS 有提成人数
+FROM tb_emp;
+
+SELECT max(comm_pct) AS 最高提成
+FROM tb_emp;
+
+#5.分组查询  GROUP BY 根据什么分组就by什么  分组的意义一般来说 在于聚合（统计）
+SELECT title,max(salary),min(salary),avg(salary)
+FROM tb_emp
+GROUP BY title;
+
+SELECT title,max(salary),min(salary),avg(salary)
+FROM tb_emp
+GROUP BY title
+having avg(salary)>2800;
+
+#6.限定查询结果 limit|DISTINCT  
+SELECT *
+from tb_salgrade
+LIMIT 2,3;

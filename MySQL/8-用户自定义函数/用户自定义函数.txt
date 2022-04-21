@@ -1,0 +1,250 @@
+自定义函数的语法格式
+
+create function 函数名(参数1  参数类型,参数2  参数类型,...)
+-- 参数是形参
+return 返回值的数据类型
+begin 
+	函数体;
+	return语句;
+end;
+函数的调用
+select 函数名(参数)
+-- 参数是实参
+
+
+-- 1.顺序结构
+-- 三角形求斜边长
+drop FUNCTION  if EXISTS f1;
+create FUNCTION f1(a int,b int)
+returns DECIMAL(10,1)
+BEGIN
+DECLARE c DECIMAL(10,1);
+set c=SQRT(a*a+b*b);
+return c;
+END ;
+
+select f1(3,4);
+
+-- 6.1创建一个存储函数，返回某个学生的姓名
+drop FUNCTION  if EXISTS NAME_OF_STU;
+CREATE FUNCTION NAME_OF_STU(XH CHAR(6))
+returns CHAR(8)
+BEGIN
+RETURN (SELECT 姓名 FROM xsb WHERE 学号=XH); 
+END;
+select NAME_OF_STU('081102');
+
+-- 6.2 创建一个用户函数fam( )，求任意两整数之和
+-- (1)创建存储函数
+DROP FUNCTION IF EXISTS fam;
+CREATE FUNCTION fam(a int,b int)
+RETURNS int  
+BEGIN
+DECLARE c int;
+set c=a+b;
+RETURN c;
+END;
+-- (2)函数的调用
+select fam(2,7);
+
+-- 6.3创建一个用户函数sea( ),求任意三角形的面积，S=0.5*a*h
+DROP FUNCTION IF EXISTS sea;
+CREATE FUNCTION sea(a DECIMAL(8,2),h DECIMAL(8,2))
+RETURNS DECIMAL(8,2)
+BEGIN
+DECLARE s DECIMAL(8,2);
+set s=1.0/2*a*h;
+return s;
+END;
+
+SELECT sea(5.685,3.62);
+
+-- 6.4 函数中利用系统函数解决问题
+DROP FUNCTION IF EXISTS sayHello;
+CREATE FUNCTION sayHello(user_name VARCHAR(10))
+RETURNS VARCHAR(20)
+BEGIN
+RETURN CONCAT('hello,',user_name);
+END;
+
+SELECT sayHello('喻诗旋');
+
+-- 6.5 建立一自定义函数，能随机产生三字姓名
+drop FUNCTION if EXISTS sqname;
+CREATE FUNCTION sqname() 
+RETURNS char(3)
+BEGIN
+DECLARE first_name char(16) default'赵钱孙李周吴郑王冯陈诸卫蒋沈韩杨';
+DECLARE mid_name char(8) default'大小多少山石土田';
+DECLARE last_name char(5) default'甲乙丙丁卯';
+DECLARE full_name char(3);
+set full_name=concat(
+substring(first_name,FLOOR(RAND()*16+1),1),
+substring(mid_name,floor(RAND()*8+1),1),
+substring(last_name,FLOOR(RAND()*5+1),1)
+);
+RETURN full_name;
+END;
+
+select sqname();
+
+-- 6.6 随机产生四位验证码，验证码由大小写字母和阿拉伯数字组成
+drop FUNCTION IF EXISTS yzm;
+CREATE FUNCTION yzm() 
+RETURNS CHAR(4)
+BEGIN
+DECLARE first_name char(62) DEFAULT'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+DECLARE mid_name char(62) DEFAULT'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+DECLARE third_name char(62) DEFAULT'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+DECLARE last_name char(62) DEFAULT'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+DECLARE full_name char(4);
+set full_name=concat(
+substring(first_name,FLOOR(RAND()*62+1),1),
+substring(mid_name,floor(RAND()*62+1),1),
+substring(third_name,floor(RAND()*62+1),1),
+substring(last_name,FLOOR(RAND()*62+1),1)
+);
+return full_name;
+END;
+
+select yzm();
+
+
+
+2---if条件控制语句
+-- 6.7利用时间函数和分支结构解决问题
+drop FUNCTION if EXISTS ffunc;
+CREATE FUNCTION  ffunc()
+RETURNS VARCHAR(20)
+BEGIN
+IF hour(now())>=11 then 
+return '晚';
+ELSE
+RETURN '早';
+END IF;
+END;
+
+SELECT ffunc();
+
+-- 6.8利用时间函数和if结构嵌套解决问题
+DROP FUNCTION IF EXISTS func1;
+CREATE FUNCTION  func1() 
+RETURNS VARCHAR(20)
+BEGIN 
+if hour(now())>=17 THEN
+RETURN '晚';
+ELSE if hour(now())>=9 then
+RETURN '中';
+else 
+RETURN '早';
+end if;
+end if;
+END;
+
+SELECT func1();
+
+-- 6.9利用系统函数和if嵌套解决问题--切割字符串
+DROP FUNCTION if EXISTS cutString;
+CREATE FUNCTION cutString(s VARCHAR(225),n int)
+RETURNS VARCHAR(225)
+BEGIN 
+IF(ISNULL(s)) then 
+RETURN '';
+ELSE IF CHAR_LENGTH(s)< n then 
+return s;
+else if CHAR_LENGTH(S)= n then 
+RETURN '相等';
+else 
+return CONCAT(left(s,n),'sgq123');
+end if;
+end if;
+end if;
+END;
+
+SELECT cutString('abcdefghijklmnopqrstuvwxyz',5);
+
+
+3.case多分支语句
+--6.10 利用case语句与函数解决问题--分数等级
+drop FUNCTION if EXISTS grade_sw;
+create FUNCTION grade_sw(score int)
+returns VARCHAR(30)
+BEGIN
+DECLARE consult int;
+DECLARE grade VARCHAR(30);
+if (score>=0) 
+then set consult = score div 10;
+case consult
+when 10 THEN
+set grade = 'A';
+when 9 THEN
+set grade = 'A';
+when 8 THEN
+set grade = 'B';
+when 7 THEN
+set grade = 'C';
+when 6 THEN
+set grade = 'D';
+when 5 THEN
+set grade = 'E';
+when 4 THEN
+set grade = 'E';
+when 3 THEN
+set grade = 'E';
+when 2 THEN
+set grade = 'E';
+when 1 THEN
+set grade = 'E';
+when 0 THEN
+set grade = 'E';
+ELSE 
+SET grade ='Score is error!';
+end case;
+else 
+set grade = 'Score is error!';
+END IF;
+return grade;
+end;
+
+select grade_sw(100);
+
+4.循环语句
+-- 6.11自定义函数中使用循环语句。用循环结构编写函数gsd1,求1+2+3+...+99+100的和
+DROP FUNCTION IF EXISTS gsd1;
+CREATE FUNCTION gsd1(n int)
+RETURNS int
+BEGIN
+DECLARE i int DEFAULT 1;
+DECLARE sums int default 0;
+while i<=n do 
+	set sums=sums+i;
+set i=i+1;
+end WHILE;
+RETURN sums;
+END;
+
+SELECT gsd1(100);
+
+show CREATE FUNCTION gsd1;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,71 @@
+案例1：查询比Abel工资高的员工信息
+第一步：查询Able的工资
+SELECT salary from employees where last_name = 'Abel';
+第二步：查询员工的信息，满足salary>第一步的结果
+select * from employees
+where salary>(
+select salary from employees where last_name = 'Abel'
+);
+案例2：查询job_id与141号员工相同，salary比143号员工多的员工姓名，job_id和工资
+select job_id FROM employees where employee_id=141;
+
+select salary from employees where employee_id=143;
+
+select last_name,job_id,salary
+from employees
+where job_id=(
+	select job_id 
+	FROM employees 
+	where employee_id=141
+)
+AND salary>
+(
+	select salary 
+	from employees 
+	where employee_id=143
+);
+案例3：查询公司中工资最少的员工的last_name，job_id ，salary
+普通查询
+select min(salary)
+from employees;
+条件查询
+select last_name,job_id,salary
+from employees
+where salary=(
+select min(salary)
+from employees
+);
+查询公司中工资最少的员工的last_name，department_id ，salary
+select last_name,department_id,salary
+from employees
+where salary=(
+select min(salary)
+from employees
+);
+案例4：查询最低工资大于50号部门的最低工资的部门id和其最低工资
+先查询50号部门的最低工资是多少
+select MIN(salary) from employees where department_id = 50;
+50号部门的所有人的工资降序排列
+SELECT employee_id,department_id,salary,last_name 
+from employees 
+where department_id = 50
+ORDER BY salary desc;
+
+案例1：返回location_id是1400或1700的部门中的所有员工姓名
+
+
+案例2：返回其他工种中比job_id为IT_PROG工种任一工资低的员工的员工号、姓名、job_id以及salary
+
+
+
+
+
+
+
+
+
+
+
+
+
+

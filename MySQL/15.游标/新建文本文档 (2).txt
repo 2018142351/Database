@@ -1,0 +1,18 @@
+DROP PROCEDURE p1;
+CREATE PROCEDURE p1()
+begin
+DECLARE xm char(10);
+DECLARE gz int;
+DECLARE S int DEFAULT 1;
+DECLARE c1 CURSOR FOR SELECT last_name,salary FROM employees where salary>15000;
+DECLARE CONTINUE HANDLER for not found set s=0;
+OPEN c1;
+FETCH c1 into xm,gz;
+while(s=1)DO
+select xm,gz;
+FETCH c1 into xm,gz;
+end WHILE;
+CLOSE C1;
+END;
+
+CALL p1();

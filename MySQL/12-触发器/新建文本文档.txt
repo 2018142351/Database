@@ -1,0 +1,45 @@
+CREATE TABLE USER(
+	id bigint(20) not null auto_increment,
+	account varchar(255) DEFAULT null,
+	name VARCHAR(255) DEFAULT null,
+	address varchar(255) DEFAULT null,
+	PRIMARY key(id)
+)ENGINE=INNODB DEFAULT charset=utf8;
+
+CREATE TABLE user_history(
+	id bigint(20) not null auto_increment,
+	user_id bigint(20) not null,
+	operatetype varchar(200) not null,
+	operatetime datetime not null,
+	PRIMARY KEY(id)
+)ENGINE = INNODB DEFAULT CHARSET=utf8;
+
+CREATE TRIGGER tri_insert_user
+AFTER 
+INSERT 
+ON USER
+FOR EACH ROW
+BEGIN
+INSERT INTO user_history(user_id,operatetype,operatetime)
+VALUES (new.id,'add a user',now());
+END
+
+CREATE TRIGGER tri_update_user 
+AFTER 
+UPDATE
+ON USER
+FOR EACH ROW
+BEGIN
+INSERT INTO user_history(user_id,operatetype,operatetime)
+VALUES (new.id,'update a user',now());
+END
+
+CREATE TRIGGER tri_delete_user 
+BEFORE
+DELETE
+ON USER
+FOR EACH ROW
+BEGIN
+INSERT INTO user_history(user_id,operatetype,operatetime)
+VALUES (old.id,'delete a user',now());
+END

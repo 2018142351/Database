@@ -1,0 +1,100 @@
+#### **一、系统变量**
+
+说明：系统变量是系统提供，不由用户定义，属于服务器层面。
+**1、查看所有系统变量的值**
+Show global|[session] variables;
+show GLOBAL VARIABLES;
+show session VARIABLES;
+show  VARIABLES;
+
+**2、查看部分系统变量**
+Show global|[session] variables like “%char%”;
+show  VARIABLES like '%char%';
+
+**3、查看指定系统变量**
+Select @@global|[session].系统变量名;
+Select @@global.autocommit;
+Select @@tx_isolation;
+
+**4、为某个系统变量赋值**
+方式一：set global|[session] 系统变量名=值;
+set autocommit=0;
+Select @@session.autocommit;
+
+方式二：set @@global|[session].系统变量名=值;
+Set @@global.autocommit=0;
+Select @@global.autocommit;
+
+
+
+#### 二、自定义变量
+
+**1、用户变量**：针对当前连接有效
+1)声明及初始化：
+Set @用户变量名=值;         或者
+Set @用户变量名:=值;       或者
+Select @用户变量名:=值;
+
+set @a=100;
+set @b:=200;
+select @c:=@a+@b;
+
+2)赋值
+方式一：
+Set @用户变量名=值;         或者
+Set @用户变量名：=值;       或者
+Select @用户变量名：=值;
+举例：
+
+set @a=500;
+set @b:=900;
+select @c:=@a-@b;
+
+Set @name='John';
+Set @name='Rose';
+Set @name=100;
+
+方式二：
+Select 字段 into @变量名 from 表;
+
+举例：
+Set @count=0;
+Select max(成绩) into @count from sc;
+SELECT @count;
+DELETE from course;
+
+
+3)使用
+Select @用户变量名;
+
+
+
+
+**2、局部变量**:仅仅在begin……end中有效
+1）声明
+declare 变量名 类型;
+declare 变量名 类型 default 值；
+
+DECLARE m int;
+DECLARE n int DEFAULT 999;
+
+
+2）赋值
+   方式一：
+通过set或select
+Set 局部变量名=值;         或者
+Set 局部变量名：=值;       或者
+Select @局部变量名：=值;
+
+set m=888;
+set n:=666;
+SELECT @sum:=12;
+
+
+
+   方式二：通过select into
+    Select 字段 into 局部变量名 from 表;
+    select avg(成绩) into m from sc;
+
+3）使用
+    Select 局部变量名;

@@ -1,0 +1,312 @@
+﻿一、含义
+当查询中涉及到了多个表的字段，需要使用多表连接
+select 字段1，字段2
+from 表1，表2,...;
+
+笛卡尔乘积：当查询多个表时，没有添加有效的连接条件，导致多个表所有行实现完全连接
+如何解决：添加有效的连接条件
+
+
+二、分类
+按年代分类：
+	sql92：
+		等值
+		非等值
+		自连接
+
+		也支持一部分外连接（用于oracle、sqlserver，mysql不支持）
+	
+                 sql99【推荐使用】
+		
+                                内连接
+			等值
+			非等值
+			自连接
+		外连接
+			左外
+			右外
+			全外（mysql不支持）
+		交叉连接
+	
+三、SQL92语法
+1、等值连接
+语法：
+	select 查询列表
+	from 表1 别名,表2 别名
+	where 表1.key=表2.key
+	【and 筛选条件】
+	【group by 分组字段】
+	【having 分组后的筛选】
+	【order by 排序字段】
+
+特点：
+	① 一般为表起别名
+	②多表的顺序可以调换
+	③n表连接至少需要n-1个连接条件
+	④等值连接的结果是多表的交集部分
+
+2、非等值连接
+语法：
+	select 查询列表
+	from 表1 别名,表2 别名
+	where 非等值的连接条件
+	【and 筛选条件】
+	【group by 分组字段】
+	【having 分组后的筛选】
+	【order by 排序字段】
+
+3、自连接
+语法：
+	select 查询列表
+	from 表 别名1,表 别名2
+	where 等值的连接条件
+	【and 筛选条件】
+	【group by 分组字段】
+	【having 分组后的筛选】
+	【order by 排序字段】
+
+四、SQL99语法
+1、内连接
+语法：
+select 查询列表
+from 表1 别名
+【inner】 join 表2 别名 on 连接条件
+where 筛选条件
+group by 分组列表
+having 分组后的筛选
+order by 排序列表
+limit 子句;
+
+特点：
+①表的顺序可以调换
+②内连接的结果=多表的交集
+③n表连接至少需要n-1个连接条件
+
+分类：
+等值连接
+非等值连接
+自连接
+
+
+2、外连接
+语法：
+select 查询列表
+from 表1 别名
+left|right|full【outer】 join 表2 别名 on 连接条件
+where 筛选条件
+group by 分组列表
+having 分组后的筛选
+order by 排序列表
+limit 子句;
+特点：
+①查询的结果=主表中所有的行，如果从表和它匹配的将显示匹配行，如果从表没有匹配的则显示null
+②left join 左边的就是主表，right join 右边的就是主表
+  full join 两边都是主表
+③一般用于查询除了交集部分的剩余的不匹配的行
+
+3、交叉连接
+
+语法：
+select 查询列表
+from 表1 别名
+cross join 表2 别名;
+
+特点：
+类似于笛卡尔乘积
+
+-- 笛卡尔连接：多个表连接时没有指定有效连接条件，导致所有行实现完全连接。
+#查询结果是两张表行数相乘。
+#怎么避免笛卡尔积现象：加条件，进行过滤。记录匹配的次数还是行数相乘，只是显示的是满足条件的有效记录。
+
+ 内连接
+
+-- 一、等值连接——条件是等量关系
+/*
+1)多表等值连接的结果是多表的交集部分
+2)n表连接，需要n-1个连接条件
+3)多表的顺序没有要求
+4)一般需要为表起别名方便引用字段
+5)可以搭配子句使用，分组、排序、筛选
+*/
+
+
+-- 1、查询员工名和对应的部门名
+SELECT  last_name,department_name 
+from employees,departments
+WHERE employees.department_id=departments.department_id;
+
+SELECT  last_name,department_name 
+from employees
+join departments
+on employees.department_id=departments.department_id;
+
+-- 2、查询员工名、工种号、工种名
+SELECT  last_name,jobs.job_id,job_title  
+from employees,jobs
+where employees.job_id=jobs.job_id;
+
+SELECT  last_name,jobs.job_id,job_title  
+from employees
+join jobs
+on  employees.job_id=jobs.job_id;
+
+-- 别名
+		-- 提高语句简洁度
+		-- 区分多个重名字段
+		-- 取别名后，不能再使用原始表名。
+SELECT  last_name,j.job_id,job_title  
+from employees e ,jobs j
+where e.job_id=j.job_id;
+
+SELECT  last_name,j.job_id,job_title  
+from employees e 
+join jobs j
+on e.job_id=j.job_id;
+
+-- 3、两个表的顺序可以调换
+
+SELECT  last_name,jobs.job_id,job_title  
+from jobs，employees
+where employees.job_id=jobs.job_id;
+
+SELECT  last_name,jobs.job_id,job_title  
+from jobs
+join employees
+on  employees.job_id=jobs.job_id;
+
+
+-- 4、连接查询可以加筛选：
+-- 有奖金的员工名，部门名,奖金系数
+
+SELECT  last_name,department_name,commission_pct
+from employees e,departments d
+WHERE e.department_id=d.department_id and commission_pct is not null;
+
+SELECT  last_name,department_name,commission_pct
+from employees e
+join departments d
+on e.department_id=d.department_id 
+WHERE commission_pct is not null;
+
+-- 城市名中第二个字符为o的部门名和城市名
+SELECT  d.department_name,l.city
+from departments d,locations l
+where d.location_id=l.location_id
+AND city like '_o%';
+
+SELECT  d.department_name,l.city
+from departments d
+join locations l
+ON d.location_id=l.location_id
+where  city like '_o%';
+
+-- 5 连接查询可以加分组
+-- 查询每个城市的部门数
+SELECT count(*),city 
+from departments d,locations l
+where d.location_id=l.location_id
+GROUP BY city;
+
+SELECT count(*),city 
+from departments d
+join locations l
+on  d.location_id=l.location_id
+GROUP BY city;
+
+-- 查询有奖金的工种的工种编号，工种名和最低工资
+SELECT e.job_id,job_title,min(salary)
+from employees e,jobs j
+where e.job_id=j.job_id and commission_pct is not null
+GROUP BY e.job_id;
+
+SELECT e.job_id,job_title,min(salary)
+from employees e
+join jobs j
+on e.job_id=j.job_id 
+where commission_pct is not null
+GROUP BY e.job_id;
+
+-- 6、连接查询加排序
+-- 求每个工种的工种名和员工个数，按员工个数降序排序
+SELECT job_title,COUNT(*)
+from employees e,jobs j
+where e.job_id=j.job_id
+GROUP BY job_title
+ORDER BY count(*) DESC;
+
+SELECT job_title,COUNT(*)
+from employees e
+join jobs j
+ON e.job_id=j.job_id
+GROUP BY job_title
+ORDER BY count(*) DESC;
+
+-- 7、查询员工姓名、部门名和所在城市
+SELECT last_name,department_name,city
+FROM employees e,departments d,locations l
+WHERE e.department_id=d.department_id and d.location_id=l.location_id
+
+and city like  'S%'
+
+ORDER BY city;
+
+SELECT last_name,department_name,city
+FROM employees e
+join departments d
+join locations l
+on e.department_id=d.department_id where d.location_id=l.location_id
+and city like  'S%'
+ORDER BY city;
+
+-- 二、非等值连接——连接条件中的关系为非等量关系
+
+-- 查询员工的工资和工资级别
+SELECT first_name,last_name,grade_level
+FROM employees e,job_grades g
+where salary BETWEEN lowest_sal and highest_sal;
+
+SELECT first_name,last_name,grade_level
+FROM employees e
+join job_grades g
+on salary BETWEEN lowest_sal and highest_sal;
+
+
+-- 三、自连接——一张表看作两张表，自己连自己。
+#查询员工号、员工名和其管理者的员工号和员工名
+SELECT yg.employee_id,yg.last_name,ld.employee_id,ld.last_name
+from employees yg,employees ld 
+where yg.manager_id=ld.employee_id;
+
+SELECT yg.employee_id,yg.last_name,ld.employee_id,ld.last_name
+from employees yg,employees ld 
+where yg.manager_id=ld.employee_id is null;
+
+#外连接
+什么是外连接，和内连接有什么区别？
+内连接：假设A和B表进行内连接，凡是A表和B表能够匹配上的记录查询出来。
+AB两张表没有主副之分，两张表是平等的。
+外连接：假设A和B表进行连接，使用外连接的话，AB两张表中有一张表是是主表，
+一张表是副表，主要查询主表中的数据，顺便查询副表中的数据，
+当副表中的数据没有和主表中的数据匹配上，副表自动模拟出NULL与之匹配。
+主表的数据无条件全部查询出来，副表中的相关字段有则显示，无则显示null。
+左外连接：表示左边的表是主表
+右外连接：表示右边的表是主表
+
+
+查询哪个城市没有部门？
+SELECT city ,department_id
+from departments d 
+RIGHT join locations l
+on d.location_id=l.location_id
+where department_id is null;
+
+
+查询部门名为SAl或者IT的员工信息
+SELECT e.*,d.department_name
+from departments d 
+LEFT join employees e
+on d.department_id=e.department_id
+where department_name in ('SAL','IT');
+
+
+

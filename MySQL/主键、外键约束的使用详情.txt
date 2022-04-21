@@ -1,0 +1,158 @@
+##### 主键约束:
+
+**主键约束可以唯一标识数据表中的每条记录，要求主键必须唯一，且其值不能为空。主键可以是单个字段，也可以是多个字段的联合**
+
+- 单字段主键
+
+**CREATE TABLE student_info(**
+
+**学号 char(4)  PRIMARY KEY ,**
+
+**姓名 char(8) not NULL,**
+
+**性别 char(2),**
+
+**出生日期 DATE,**
+
+**家庭住址 VARCHAR(50)**
+
+**);**
+
+ 
+
+或者：
+
+**CREATE TABLE  student_info(**
+
+**学号 char(4) ,**
+
+**姓名 char(8) not NULL,**
+
+**性别 char(2),**
+
+**出生日期 DATE,**
+
+**家庭住址 VARCHAR(50),**
+
+**PRIMARY KEY(****学号),**
+
+**);**
+
+- 多字段主键（联合主键）
+
+**CREATE TABLE grade(**
+
+**学号 char(4) not NULL,**
+
+**课程编号 char(4) not NULL,**
+
+**分数 INT,**
+
+**PRIMARY key(学号,课程编号)**
+
+**);**
+
+
+
+##### 外键约束：
+
+用来在两个表的数据之间建立连接，可以指定一个字段或者多个字段为外键。外键的作用是保护数据的引用完整性。一个表的外键可以为空值，若不为空值，则必须是另一个表中主键的某个值。
+
+语法格式：
+
+​	**CREATE TABLE grade(**
+
+**学号 char(4) not NULL,**
+
+**课程编号 char(4) not NULL,**
+
+**分数 INT,**
+
+**Constraint fk_curriculum_grade Foreign key(课程编号) references curriculum(课程编号);**
+
+**);**
+
+
+
+- 删除外键
+
+ALTER  TABLE  XXX
+
+DROP  CONSTRAINT  XXX;
+
+- 增加外键
+
+ALTER  TABLE  XXX
+
+ADD  CONSTRAINT  XXX
+
+FOREIGN  KEY(XXX)
+
+REFERENCES  XXX(XXX);
+
+- 级联操作
+
+Alter table 表名 add constraint 外键名 
+
+Foreign key(外键字段名称) references 主表名称(主表列名称) 
+
+on update cascade on delete cascade;
+
+
+
+**唯一性约束：**
+
+语法：  字段名  数据类型  unique
+
+**CREATE TABLE student_info(**
+
+**学号 char(4) not NULL ,**
+
+**姓名 char(8) not NULL,**
+
+**性别 char(2),**
+
+**邮箱地址 char(20) unique,**
+
+**家庭住址 VARCHAR(50)**
+
+**);**
+
+
+
+**非空约束：**
+
+语法： 字段名  数据类型  not  null
+
+**CREATE TABLE grade(**
+
+**学号 char(4) not NULL,**
+
+**课程编号 char(4) not NULL,**
+
+**分数 INT**
+
+**);**
+
+**默认值约束：**
+
+语法：字段名  数据类型  default  默认值
+
+**CREATE TABLE student_info(**
+
+**学号 char(4) not NULL ,**
+
+**姓名 char(8) not NULL,**
+
+**性别 char(2) default ‘男’,**
+
+**邮箱地址 char(20) unique,**
+
+**家庭住址 VARCHAR(50)**
+
+**);**
+
+
+
+
+

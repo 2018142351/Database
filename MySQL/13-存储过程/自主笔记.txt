@@ -1,0 +1,17 @@
+8.3.1	存储过程的使用
+1.创建存储过程
+delimiter 命令
+
+语法格式：
+CREATE PROCEDURE 过程名([pro_parameter])
+BEGIN
+过程体
+END
+proc_parameter 指定存储过程的参数列表，列表形式如下：
+[in|OUT |INOUT]param_name type
+in 代表输入参数
+out 代表输出参数
+inout 代表输入输出参数
+param_name 表示参数名称；type表示参数类型
+
+例：

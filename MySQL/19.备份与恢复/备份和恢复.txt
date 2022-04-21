@@ -1,0 +1,133 @@
+﻿1、创建用户
+create user 'user_name' @'host' identified by 'password'
+user_name：用户名
+host：指定该用户可以从哪台主机登录
+本地主机可以使用localhost，其他主机需要指定ip地址
+如果允许该用户从任意地方登录，可以使用通配符%
+password：新用户密码
+
+例：create  user 'user1'  @'localhost'  identified by '123456';
+
+cmd窗口登录
+
+2、查看
+可以使用select查看用户和其他主机名
+select user,host from mysql.user;
+
+可以使用current_user( )函数查看当前用户
+select current_user( );
+
+登录：mysql -u user1 -p123456
+
+查看数据库：show databases； 只看见默认的information_schema
+
+5、授权
+在root用户授权
+grant all on test.* to 'user1' @'localhost';
+命令格式：使用grant
+grant privileges on database_name.table_name to 'user_name'  @'host'
+privileges:用户操作权限，有select 、update、insert 、delete等
+如果要授予全部权限的话，可以使用ALL
+database.table_name:指定数据库和相应的表，如果需要授权所有的数据库或所有的表的话，可以使用通配符*
+
+授权后新用户重新登录，具备相应权限。
+
+
+
+3、修改用户名
+rename user 'user1' @'localhost' to 'user2' @'localhost';
+
+修改之后查看用户信息
+select user,host from mysql.user;
+
+
+4、修改密码
+方法1：
+cd c:\program files\mysql\mysql server 5.5\bin
+mysqladmin -u root  -p2021 password 123或者 mysqladmin -u root  -p  password 新密码
+
+方法2：
+use mysql;
+update mysql.user set password='123456'   where user='root';或
+update mysql.user set password=password('123456') where user='root' and host='localhost';
+
+方法3：通过root登录mysql后，通过set命令修改
+set password=password('123'）；
+
+免密码：[mysqld]
+skip-grant-tables
+
+Mysql5.7.5及以前
+set password for 'user_name' @'host' =password('new_password');
+Mysql5.7.6及以上
+alter user 'user_name' @'host' identified by 'new_password';
+alter user 'user1' @'localhost' identified by '654321';
+
+
+
+6、撤销用户权限revoke
+revoke privilege on database_name .table_name from 'user_name' @'host'
+例：revoke all on test.* from 'user1' @'localhost';
+
+7、删除用户
+drop user 'user_name' @'host'
+例：drop user user1@localhost   也可以不加引号 
+
+8、备份
+在未登录状态下
+备份某个数据库：mysqldump -uroot -p myemployees >d:/mydb.sql
+备份数据库中的一个表：mysqldump -uroot -p myemployees jobs >d:/mydb.sql
+备份多个数据库：mysqldump -uroot -p --databases myemployees chaxun3 >d:/mydb.sql
+备份所有数据库：mydump -uroot -p --all -database>d:/all.sql
+
+9、恢复数据库
+
+例如：将d:/mydb.sql文件中的数据恢复到db99库中。
+1)先在cmd窗口，登录mysql，创建db99数据库。
+create database db99  charset utf8;
+2)再在cmd窗口（未登录状态下）  
+mysql -uroot -p db99<mydb.sql
+use db99;
+先后查看库中表的情况。
+
+例如：将d:/mydb.sql文件中的数据恢复到db88库中。
+1)先在cmd窗口，登录mysql，创建db88数据库，进入db88数据库。
+create database db88 charset utf8;
+use db88;
+2)再通过sourse执行指定位置下的sql文件
+source d:\mydb.sql
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+10、导入数据
+首先创建空表aa，再导入表数据
+load data infile  ‘d:\\lqxxb.txt' into  table aa；
+load data infile  ‘d:\\lqxxb.txt' into  table aa fields terminated by '	' ignore 1 lines；
+txt文件编码ansi
+命令行显示中文，需要set names gbk;
+
+
+11、导出数据：
+select 字段列表  
+into outfile  "d:\\aa_info.txt" 
+from aa；

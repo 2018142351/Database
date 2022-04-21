@@ -1,0 +1,80 @@
+-- CREATE FUNCTION f1(a DECIMAL(8,2),b DECIMAL(8,2))
+-- RETURNS DECIMAL(8,2)
+-- BEGIN
+--  return sqrt(abs(a*a-b*b));
+-- end;
+-- SELECT f1(5,13);
+
+-- CREATE FUNCTION f2(title char(10))
+-- returns char(60)
+-- BEGIN
+-- DECLARE n int;
+-- SELECT count(*) into n
+-- from employees e
+-- join jobs j
+-- on e.job_id=j.job_id
+-- where job_title=title;
+-- return concat(title,'工作岗位有',n,'个员工');
+-- end;
+-- SELECT f2('Accountant');
+
+
+
+-- CREATE FUNCTION f3(ygm char(20))
+-- returns char(60)
+-- BEGIN
+-- DECLARE ldm char(20);
+-- SELECT ld.last_name into ldm
+-- from employees yg
+-- JOIN employees ld
+-- on yg.manager_id=ld.employee_id
+-- where yg.last_name=ygm;
+-- return concat(ygm,'的领导是',ldm);
+-- end;
+-- SELECT f3('Greenberg');
+
+
+
+
+
+
+-- CREATE FUNCTION f4(fenshu int)
+--  returns char(2)
+-- BEGIN
+-- DECLARE dj char(2);
+-- if(fenshu>=0 and fenshu<=100)
+--  THEN
+-- CASE
+-- when fenshu>=90 then set dj='A';
+-- when fenshu>=80 then set dj='B';
+-- when fenshu>=60 then set dj='C';
+-- else                 set  dj='D';
+-- end case;
+-- ELSE
+-- set dj='data error!';
+-- end if;
+-- return dj;
+-- end;
+-- 
+-- SELECT f4(78);
+
+
+
+
+
+CREATE FUNCTION f5(n int)
+returns INT
+BEGIN
+DECLARE i int;
+DECLARE s int;
+set i=1;
+set s=0;
+ss:while(i<=n) DO
+set s=s+i;
+set i=i+2;
+if(s>=n) then leave ss;
+end if;
+end while;
+return i-2;
+end;
+SELECT f5(3000);

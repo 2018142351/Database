@@ -1,0 +1,89 @@
+﻿熟悉数据库myemployees及其中的表，完成下列操作：
+-- 1、为表jobs在job_id字段上建立唯一索引index_jobid，在job_title字段上建立普通索引index_jobtitle。
+CREATE UNIQUE index index_jobid on jobs(job_id) 
+
+ALTER table jobs add index index_jobtitle(job_title)
+-- 2、在locations表的street_address和postal_code字段上建立多列联合索引index_street_postal。
+
+CREATE index index_street_postal on locations(street_address,postal_code)
+-- 3、删除jobs表的index_jobtitle索引。
+drop index index_jobtitle on jobs
+
+
+-- 4、创建视图v1，查询邮箱中包含w字符的员工名last_name，部门名department_name和工种名job_title。
+CREATE or replace view v1
+AS
+SELECT last_name,department_name,job_title
+from employees e
+join departments d on e.department_id=d.department_id
+join jobs j on e.job_id=j.job_id
+
+SELECT * from v1 where last_name like '%w%'
+
+-- 5、创建视图v2，查询各部门departmet_id的平均工资对应的级别grade_level
+CREATE or replace  view v2
+as
+SELECT AVG(salary) pj,department_id
+from employees 
+GROUP BY department_id
+SELECT * from v2;
+
+SELECT v2.*,grade_level
+from v2
+join job_grades j
+on v2.pj BETWEEN lowest_sal and highest_sal
+-- 6、通过视图v2，查询平均工资最低的部门信息
+ SELECT * from v2 ORDER BY pj limit 1
+-- 7、创建视图v3，查询平均工资最低的部门名的department_name和工资salary
+CREATE or REPLACE  view v3
+as
+SELECT * from v2 ORDER BY pj limit 1
+
+SELECT * from v3;
+
+SELECT v3.*,department_name
+from v3
+join departments d
+on v3.department_id=d.department_id
+-- 8、创建视图v4，查询电话号码以011开头的员工姓名和工资、邮箱
+CREATE view  v4
+as
+SELECT last_name,salary,email
+from employees
+where phone_number like '011%'
+SELECT * from v4;
+
+-- 9、创建视图v5，查询最高工资高于12000的部门信息及工资
+CREATE view v5
+as
+SELECT  department_id,max(salary) zg
+from employees
+GROUP BY department_id
+having zg>12000
+
+-- 10、创建视图v6，查询employees表中last_name,salary和邮箱。
+-- 通过视图v6向表中插入记录(‘jie’,39999,’jie@edg.com’)，
+-- 再将jie的last_name修改为‘赵礼杰’，
+-- 最后删除employees表中last_name包含w的员工。
+CREATE VIEW v6
+as
+SELECT last_name,salary,email
+from employees
+
+insert into v6 values('jie',39999,'jie@edg.com')
+update v6 set last_name='赵礼杰' where last_name='jie'
+DELETE from v6 where last_name like '%w%'
+
+-- 11、更新视图v4，更新后的视图用来查询电话号码515开头的员工。
+CREATE or REPLACE view  v4
+as
+SELECT last_name,salary,email
+from employees
+where phone_number like '515%'
+
+-- 12、删除视图v2。
+drop view v2
+
+
+
+

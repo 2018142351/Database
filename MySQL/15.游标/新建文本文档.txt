@@ -1,0 +1,23 @@
+DROP PROCEDURE IF EXISTS p1;
+CREATE PROCEDURE p1()
+BEGIN
+DECLARE ss int DEFAULT 1;
+
+DECLARE xm char(15);
+DECLARE gz int;
+DECLARE c1 CURSOR FOR SELECT last_name,salary  FROM employees where salary>12000;
+
+DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET ss=0;
+
+OPEN c1;
+FETCH c1 into xm,gz;
+
+WHILE (ss=1) DO
+SELECT xm,gz;
+
+FETCH c1 into xm,gz;
+END WHILE;
+CLOSE c1;
+END 
+
+CALL p1();

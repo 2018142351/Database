@@ -1,0 +1,58 @@
+drop FUNCTION  if EXISTS f1;
+create FUNCTION f1(a int,b int)
+returns DECIMAL(8,1)
+BEGIN
+DECLARE c DECIMAL(8,1);
+set c=SQRT(a*a+b*b);
+return c;
+END ;
+
+select f1(3,4);
+
+
+drop FUNCTION if EXISTS grade_sw;
+create FUNCTION grade_sw(score int)
+returns VARCHAR(30)
+BEGIN
+DECLARE consult int;
+DECLARE grade VARCHAR(30);
+if (score>=0) 
+then set consult = score div 10;
+case consult
+when 10 THEN
+set grade = 'A';
+when 9 THEN
+set grade = 'A';
+when 8 THEN
+set grade = 'B';
+when 7 THEN
+set grade = 'C';
+when 6 THEN
+set grade = 'D';
+when 5 THEN
+set grade = 'E';
+when 4 THEN
+set grade = 'E';
+when 3 THEN
+set grade = 'E';
+when 2 THEN
+set grade = 'E';
+when 1 THEN
+set grade = 'E';
+when 0 THEN
+set grade = 'E';
+ELSE 
+SET grade ='Score is error!';
+end case;
+else 
+set grade = 'Score is error!';
+END IF;
+return grade;
+end;
+
+select grade_sw(10);
+
+
+
+
+

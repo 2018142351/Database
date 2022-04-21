@@ -1,0 +1,9 @@
+CREATE TABLE tb_student_item
+(
+	id INT PRIMARY KEY auto_increment,
+	studentId INT,
+	itemId int,
+	INDEX index_studentId (studentId)
+);
+
+CREATE index index_itemId on tb_student_item (itemId);
